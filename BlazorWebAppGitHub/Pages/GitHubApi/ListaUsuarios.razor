@@ -1,0 +1,50 @@
+﻿@page "/GitHubApi/ListaUsuarios"
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (usuarios == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nome de Usuário</th>
+                <th>URL</th>
+                <th>Opções</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in usuarios)
+            {
+                <tr>
+                    <td>@usuario.id</td>
+                    <td>@usuario.login</td>
+                    <td>@usuario.url</td>
+                    <td>
+                        <a href="GitHubApi/editar/@usuario.login" class="btn">
+                            <i class="oi oi-pencil"></i>
+                        </a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<GitHubAPI>? usuarios;
+
+    protected override async Task OnInitializedAsync()
+    { 
+        usuarios = await _gitHubAPIService.ListarUsuarios();
+    }
+}

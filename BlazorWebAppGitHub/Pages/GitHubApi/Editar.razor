@@ -1,0 +1,66 @@
+﻿@page "/GitHubApi/editar/{Login}"
+
+<h1>@_model?.login</h1>
+
+@if (_model == null || _repos == null)
+{
+    <p><em>Loading...</em></p>
+}else
+{
+    <EditForm Model="_model">
+        <div class="mb-3">
+            <label for="Nome" class="form-label">Id</label>
+            <InputNumber class="form-control" type="number" id="Id" @bind-Value="_model.id" />
+        </div>        
+        <div class="mb-3">
+            <label for="Nome" class="form-label">Nome de Usuário</label>
+            <InputText class="form-control" type="text" id="Nome" @bind-Value="_model.login" />
+        </div>        
+        <div class="mb-3">
+            <label for="Nome" class="form-label">Data de cadastro</label>
+            <InputDate class="form-control" type="date" id="dtCadastro" @bind-Value="_model.created_at" />
+        </div>
+        <div class="mb-3">
+            <label for="Preco" class="form-label">Url do perfil</label>
+            <InputText class="form-control" type="link" id="Url" @bind-Value="_model.url" />
+        </div>
+        <br />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nome do Repo</th>
+                    <th>Opções</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var repo in _repos.OrderByDescending(x => x.id))
+                {
+                    <tr>
+                        <td>@repo.id</td>
+                        <td>@repo.name</td>
+                        <td>
+                            <a href="@repo.html_url">@repo.html_url</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </EditForm>
+    
+}
+
+@code {
+    [Parameter]
+    public string Login { get; set; }
+
+    private GitHubAPI? _model = new();
+    private List<GitHubAPIRepos> _repos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = await _gitHubAPIService.ObterUsuario(Login);
+
+        _repos = await _gitHubAPIService.ListarRepoUsuario(Login);
+    }
+}
